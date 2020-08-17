@@ -49,7 +49,7 @@
             this.MenuDll = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SelectDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.AllClean = new System.Windows.Forms.ToolStripMenuItem();
-            this.label1 = new System.Windows.Forms.Label();
+            this.RepackLogText = new System.Windows.Forms.Label();
             this.VersionNet = new System.Windows.Forms.Label();
             this.UPanel.SuspendLayout();
             this.MenuLog.SuspendLayout();
@@ -110,6 +110,7 @@
             // 
             // CompileBuild
             // 
+            this.CompileBuild.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CompileBuild.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(110)))), ((int)(((byte)(166)))));
             this.CompileBuild.Enabled = false;
             this.CompileBuild.FlatAppearance.BorderSize = 0;
@@ -248,7 +249,6 @@
             this.LibraryPathBox.Location = new System.Drawing.Point(9, 110);
             this.LibraryPathBox.Name = "LibraryPathBox";
             this.LibraryPathBox.Size = new System.Drawing.Size(518, 119);
-            this.LibraryPathBox.Sorted = true;
             this.LibraryPathBox.TabIndex = 13;
             this.LibraryPathBox.TabStop = false;
             this.RussianMessage.SetToolTip(this.LibraryPathBox, "Список .dll файлов которые требуется добавить в сборку.\r\nПереместите в это поле ф" +
@@ -285,15 +285,15 @@
             this.AllClean.Text = "Clear all";
             this.AllClean.Click += new System.EventHandler(this.AllClean_Click);
             // 
-            // label1
+            // RepackLogText
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(449, 277);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Repacking log";
+            this.RepackLogText.AutoSize = true;
+            this.RepackLogText.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.RepackLogText.Location = new System.Drawing.Point(449, 277);
+            this.RepackLogText.Name = "RepackLogText";
+            this.RepackLogText.Size = new System.Drawing.Size(76, 13);
+            this.RepackLogText.TabIndex = 11;
+            this.RepackLogText.Text = "Repacking log";
             // 
             // VersionNet
             // 
@@ -313,7 +313,7 @@
             this.ClientSize = new System.Drawing.Size(537, 424);
             this.Controls.Add(this.VersionNet);
             this.Controls.Add(this.LibraryPathBox);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.RepackLogText);
             this.Controls.Add(this.RepackLogBox);
             this.Controls.Add(this.DragDropHelper);
             this.Controls.Add(this.StatusMessage);
@@ -324,6 +324,7 @@
             this.Controls.Add(this.CompileBuild);
             this.Controls.Add(this.AddingExecutable);
             this.Controls.Add(this.UPanel);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -358,7 +359,7 @@
         private System.Windows.Forms.Label DragDropHelper;
         private System.Windows.Forms.ToolTip RussianMessage;
         private System.Windows.Forms.TextBox RepackLogBox;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label RepackLogText;
         private System.Windows.Forms.ContextMenuStrip MenuDll;
         private System.Windows.Forms.ToolStripMenuItem SelectDelete;
         private System.Windows.Forms.ToolStripMenuItem AllClean;

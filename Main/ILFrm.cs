@@ -27,24 +27,28 @@
         public ILFrm()
         {
             InitializeComponent();
+            // Палитра для кнопок в ContextMenu
             this.MenuDll.Renderer = new ToolStripProfessionalRenderer(new MenuPalette());
             this.MenuLog.Renderer = new ToolStripProfessionalRenderer(new MenuPalette());
 
+            // Какие элементы можно передвигать кликом мышки
             this.LogoText.MouseDown += Controls_MouseDown;
             this.UPanel.MouseDown += Controls_MouseDown;
 
+            // Обработка событий Drag and Drop
             DragEnter += new DragEventHandler(LibraryPathBox_DragEnter);
             DragDrop += new DragEventHandler(LibraryPathBox_DragDrop);
         }
 
         private void ExitApp_Click(object sender, EventArgs e)
         {
-            DeleteILPack();
-            Application.Exit();
+            DeleteILPack(); // Удаляем ilpacker.exe
+            Application.Exit(); // Выходим из программы
         }
 
         private void AddingExecutable_Click(object sender, EventArgs e)
         {
+            // Убираем фокус с кнопки
             NativeMethods.SetFocus(IntPtr.Zero);
             this.LogoText.Focus();
 
@@ -72,6 +76,7 @@
 
         private void AddingLibrary_Click(object sender, EventArgs e)
         {
+            // Убираем фокус с кнопки
             NativeMethods.SetFocus(IntPtr.Zero);
             this.LogoText.Focus();
 
@@ -90,14 +95,14 @@
                 {
                     string FrameVerDllInfo = CheckFramework.Version(multi); // Получаем версию NetFramework бибиотеки
                     string FrameVerExeInfo = CheckFramework.Version(this.ExecutablePathBox.Text); // Получаем версию NetFramework бинарника
-                    if (!FrameVerDllInfo.Contains("N/A"))
+                    if (!FrameVerDllInfo.Contains("N/A")) // Если нет совпадений с N/A
                     {
-                        if (!this.LibraryPathBox.Items.Contains(multi))
+                        if (!this.LibraryPathBox.Items.Contains(multi)) // Если нет совпадающий файлов в списке
                         {
                             if (FrameVerExeInfo.Equals(FrameVerDllInfo, StringComparison.OrdinalIgnoreCase)) // Если версии .dll совпадает с .exe
                             {
-                                this.LibraryPathBox.Items.Add(multi);
-                                this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}";
+                                this.LibraryPathBox.Items.Add(multi); // Добавляем файл в ListBox
+                                this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}"; // Добавляем счётчик
                             }
                             else
                             {
@@ -127,18 +132,20 @@
 
         private void ILFrm_Load(object sender, EventArgs e)
         {
-            this.LibraryPathBox.AllowDrop = true;
+            this.LibraryPathBox.AllowDrop = true; // Для перемещения файлов ставим true
         }
 
         private void SelectDelete_Click(object sender, EventArgs e)
         {
+            // Убираем фокус с кнопки
             NativeMethods.SetFocus(IntPtr.Zero);
             this.LogoText.Focus();
 
+            // Если если какой-то элемент в списке
             if (this.LibraryPathBox.SelectedIndex != -1)
             {
-                this.LibraryPathBox.Items.RemoveAt(this.LibraryPathBox.SelectedIndex);
-                this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}";
+                this.LibraryPathBox.Items.RemoveAt(this.LibraryPathBox.SelectedIndex); // Удаляем выбранный элемент
+                this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}"; // Добавляем счётчик
             }
             else
             {
@@ -149,27 +156,22 @@
 
         private void AllClean_Click(object sender, EventArgs e)
         {
-            NativeMethods.SetFocus(IntPtr.Zero);
-            this.LogoText.Focus();
-            if (this.LibraryPathBox.SelectedIndex != -1)
-            {
-                this.LibraryPathBox.Items.Clear();
-                this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}";
-            }
-            else
-            {
-                StatusMessage.Location = new Point(7, 273);
-                ControlActive.CheckMessage(StatusMessage, "There is nothing on the list.", Color.LightBlue, 3000);
-            }
+           // Очищяем весь список
+           this.LibraryPathBox.DataSource = null;
+           this.LibraryPathBox.Items.Clear();
+           this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count.ToString().Trim('0')}"; // Убираем счётчик
         }
 
         private void ClearLog_Click(object sender, EventArgs e)
         {
+            // Убираем фокус с кнопки
             NativeMethods.SetFocus(IntPtr.Zero);
             this.LogoText.Focus();
+            
+            // Если логированный список не пустой
             if (!string.IsNullOrWhiteSpace(this.RepackLogBox.Text))
             {
-                this.RepackLogBox.Clear();
+                this.RepackLogBox.Clear(); // Очищяем
             }
             else
             {
@@ -180,23 +182,32 @@
 
         private void LibraryPathBox_DragDrop(object sender, DragEventArgs e)
         {
+            // Если путь к файлу .exe не пустой
             if (!string.IsNullOrWhiteSpace(this.ExecutablePathBox.Text))
             {
+                // Принимаем файл(ы)
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                // Проходимся в цикле
                 foreach (string file in files)
                 {
+                    // Проверяем расширения файла
                     if (files[0].EndsWith(".dll"))
                     {
-                        string FrameVerDllInfo = CheckFramework.Version(files[0]); // Получаем версию NetFramework бибиотеки
-                        string FrameVerExeInfo = CheckFramework.Version(this.ExecutablePathBox.Text); // Получаем версию NetFramework бинарника
+                        // Получаем версию NetFramework бибиотеки
+                        string FrameVerDllInfo = CheckFramework.Version(files[0]);
+                        // Получаем версию NetFramework бинарника
+                        string FrameVerExeInfo = CheckFramework.Version(this.ExecutablePathBox.Text);
+                        // Если версия не совпадает с N/A
                         if (!FrameVerDllInfo.Contains("N/A"))
                         {
+                            // Если нет совпадений файлов из ListBox'a
                             if (!this.LibraryPathBox.Items.Contains(file))
                             {
-                                if (FrameVerExeInfo.Equals(FrameVerDllInfo, StringComparison.OrdinalIgnoreCase)) // Если версии .dll совпадает с .exe
+                                // Если версии .dll совпадает с .exe
+                                if (FrameVerExeInfo.Equals(FrameVerDllInfo, StringComparison.OrdinalIgnoreCase)) 
                                 {
-                                    this.LibraryPathBox.Items.Add(file);
-                                    this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}";
+                                    this.LibraryPathBox.Items.Add(file); // Добавляем файл в список ListBox 
+                                    this.TextPathLibrary.Text = $"Path to .dll file(s): {LibraryPathBox.Items.Count}"; // Добавляем счётчик
                                 }
                                 else
                                 {
@@ -234,34 +245,48 @@
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
             {
-                e.Effect = DragDropEffects.Move;
+                e.Effect = DragDropEffects.Move; // Эффект перетаскивания
             }
         }
 
         private async void CompileBuild_Click(object sender, EventArgs e)
         {
+            // Убираем фокус с кнопки
+            NativeMethods.SetFocus(IntPtr.Zero);
+            this.LogoText.Focus();
+
+            // Если путь к файлу .exe не пустой
             if (!string.IsNullOrWhiteSpace(this.ExecutablePathBox.Text))
             {
+                // Если в списке ListBox есть .dll файлы
                 if (this.LibraryPathBox.Items.Count > 0)
                 {
+                    // Проверяем на корректность библиотек
                     if (CheckLibrary())
                     {
+                        // Очищяем логгер
                         this.RepackLogBox.Clear();
+                        // Проверяем файл ILRepacke'a в папке %AppData%
                         if (!File.Exists(GlobalPath.ILPath))
                         {
                             try
                             {
+                                // Если файла нету, то сохраняем его в папку %AppData% из ресурсов.
                                 File.WriteAllBytes(GlobalPath.ILPath, Resources.ilrepack);
                             }
                             catch { }
                         }
+                        
+                        // Выполняем слияние библиотек с файлом в асинхронном режиме
                         var action = new Action<string>((s) => this.RepackLogBox.Text += $"{s}{Environment.NewLine}");
                         foreach (string item in await RepackRun.GetCMDOutputAsync(Script()).ConfigureAwait(false))
                         {
                             this.RepackLogBox.Invoke(action, item);
                         }
+                        // Если в логгере находим строку Finished - что значит "закончено"
                         if (this.RepackLogBox.Text.Contains("Finished"))
                         {
+                            // Уведомляем пользователя что всё прошло успешно
                             MusicPlay.Inizialize(Resources.GoodBuild);
                             this.StatusMessage.Location = new Point(128, 244);
                             ControlActive.CheckMessage(this.StatusMessage, "Libraries have been successfully added to the assembly!", Color.LightBlue, 3000);
@@ -269,6 +294,7 @@
                         }
                         else
                         {
+                            // Иначе выводим ошибку 
                             MusicPlay.Inizialize(Resources.Error_Build);
                             this.StatusMessage.Location = new Point(128, 244);
                             ControlActive.CheckMessage(this.StatusMessage, "Error adding libraries!", Color.LightBlue, 3000);
@@ -288,49 +314,72 @@
             }
         }
 
+        /// <summary>
+        /// Метод для создания скрипта для слияния библиотек.
+        /// </summary>
+        /// <returns>Сгенерированный скрипт для слияния</returns>
         private string Script()
         {
-            StringBuilder combine = null;
+            StringBuilder combine = null; 
             try
             {
+                // Получаем текушее имя файла .exe из TextBox'a. (this.ExecutablePathBox.Text)
                 string CurrFile = Path.GetFileName(this.ExecutablePathBox.Text);
+                // Меняем старое имя файла на новое.
                 string NewFile = CurrFile.Replace(CurrFile, $"Repacked_{CurrFile}");
                 combine = new StringBuilder();
-                combine.Append($"{this.ExecutablePathBox.Text} ");
+                // Добавляем путь к файлу к которому нужно добавлять библиотеки.
+                combine.Append($"{this.ExecutablePathBox.Text} "); 
+                // Проверяем тип выходных данных приложения из TextBox'a.
                 if (CheckLinker.SubSystem(this.ExecutablePathBox.Text).Contains("Console"))
                 {
-                    combine.Append("/t:exe ");
+                    // Параметр -target:exe предписывает компилятору создать исполняемое (EXE) консольное приложение.
+                    combine.Append("/t:exe "); 
                 }
                 else
                 {
+                    // Параметр -target:winexe предписывает компилятору создать исполняемый файл (EXE), программу Windows.
                     combine.Append("/t:winexe ");
                 }
+                // Отключает создание файла символов.
                 combine.Append("/ndebug ");
+                // Выходной путь нового файла.
                 combine.Append($"/out:\"{Path.Combine(GlobalPath.CurrDir, NewFile)}\" ");
+                // Проходимся по списку .dll файлов из ListBox'a.
                 foreach (var listdll in LibraryPathBox.Items)
                 {
-                    combine.Append($"{listdll} ");
+                    combine.Append($"{listdll} "); // Добавляем их в параметр для слияния.
                 }
             }
             catch { }
 
-            return combine?.ToString();
+            return combine?.ToString(); // Возвращаем готовый скрипт.
         }
 
+        /// <summary>
+        /// Метод для удаления файла <b>ilrepack.exe</b> в папке <b>%AppData%</b>.
+        /// </summary>
         private void DeleteILPack()
         {
             try
             {
+                // Проверяем файл в папке
                 if (File.Exists(GlobalPath.ILPath))
                 {
+                    // Удаляем файл из папки
                     File.Delete(GlobalPath.ILPath);
                 }
             }
             catch { }
         }
 
+        /// <summary>
+        /// Метод для проверки библиотек на наличие .NetFramework'a
+        /// </summary>
+        /// <returns>true/false</returns>
         private bool CheckLibrary()
         {
+            // Проходимся по списку .dll из ListBox'a
             foreach (var libs in this.LibraryPathBox.Items)
             {
                 bool result = CheckNative.IsReflection((string)libs);
@@ -350,42 +399,50 @@
        
         private void RepackLogBox_TextChanged(object sender, EventArgs e)
         {
+            // Проверяем если есть изменения в тексте
             if (!(TextRenderer.MeasureText(RepackLogBox.Text, RepackLogBox.Font).Width < RepackLogBox.Width))
             {
-                RepackLogBox.SelectionStart = RepackLogBox.Text.Length;
-                RepackLogBox.ScrollToCaret();
-                RepackLogBox.ScrollBars = ScrollBars.Vertical;
+                RepackLogBox.SelectionStart = RepackLogBox.Text.Length; // Получаем начальный размер строки из Логгера
+                RepackLogBox.ScrollToCaret(); // Прокручиваем текст до текущей позиции 
+                RepackLogBox.ScrollBars = ScrollBars.Vertical; // Отображаем только вертикальную полосу прокрутки
             }
             else
             {
-                RepackLogBox.ScrollBars = ScrollBars.None;
+                RepackLogBox.ScrollBars = ScrollBars.None; // Убераем полосу прокрутки
             }
         }
 
         private void ExecutablePathBox_TextChanged(object sender, EventArgs e)
         {
+            // Если путь к файлу .exe не пустой
             if (!string.IsNullOrWhiteSpace(this.ExecutablePathBox.Text))
             {
+                // Выводим версию .Net файла 
                 this.VersionNet.Text = $"NetFramework: {CheckFramework.Version(this.ExecutablePathBox.Text)}";
+                // Если строка совпадает с N/A
                 if (this.VersionNet.Text.Contains("N/A"))
                 {
+                    // Выводим ошибку пользователю
                     MusicPlay.Inizialize(Resources.Error_Build);
                     this.ExecutablePathBox.Clear();
                     this.StatusMessage.Location = new Point(7, 273);
                     ControlActive.CheckMessage(StatusMessage, "Supports only .Net binary files", Color.LightBlue, 3000);
-                    this.AddingLibrary.Enabled = false;
+                    this.AddingLibrary.Enabled = false; // Блокируем кнопку добавления библиотек .dll 
                 }
                 else
                 {
-                    this.AddingLibrary.Enabled = true;
-                    this.CompileBuild.Enabled = true;
+                    // разблокируем элементы кнопок 
+                    this.AddingLibrary.Enabled = true; // Добавление библиотек .dll
+                    this.CompileBuild.Enabled = true; // Перепаковка ( слияние библиотек )
                 }
             }
             else
             {
+                // Очищяем версию .Net Framework 
                 this.VersionNet.Text = "";
-                this.AddingLibrary.Enabled = false;
-                this.CompileBuild.Enabled = false;
+                // Блокируем элементы кнопко 
+                this.AddingLibrary.Enabled = false; // Добавление библиотек .dll
+                this.CompileBuild.Enabled = false; // Перепаковка ( слияние библиотек )
             }
         }
     }
