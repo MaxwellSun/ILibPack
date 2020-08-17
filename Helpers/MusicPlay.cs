@@ -6,18 +6,22 @@
 
     public static class MusicPlay
     {
+        /// <summary>
+        /// Метод для проигрывания музыки в формате <b>.wav</b>
+        /// </summary>
+        /// <param name="stream">Звуковой файл формата <b>.wav</b> из ресурсов</param>
         public static void Inizialize(UnmanagedMemoryStream stream)
         {
             try
             {
                 using var snd = new SoundPlayer(stream);
-                snd?.Load();
-                if (snd.IsLoadCompleted)
+                snd?.Load(); // Загружаем звуковой файл
+                if (snd.IsLoadCompleted) // Проверяем загрузку файла
                 {
-                    snd.Play();
+                    snd.Play(); // Проигрываем файл
                 }
             }
-            catch (Exception ex) { File.WriteAllText(Path.Combine(GlobalPath.CurrDir, "ErrorPlay.txt"), ex.Message); }
+            catch (Exception ex) { File.WriteAllText(GlobalPath.MusicError, ex.Message); }
         }
     }
 }

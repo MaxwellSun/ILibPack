@@ -5,11 +5,17 @@
 
     public static class CheckFramework
     {
+        /// <summary>
+        /// Метод для получения версии .NetFramework'a из файла
+        /// </summary>
+        /// <param name="assemblyFile">Имя файла</param>
+        /// <returns>Версия среды выполнения образа</returns>
         public static string Version(string assemblyFile)
         {
             string result = string.Empty;
             try
             {
+                // Загружаем сборку
                 var ass = Assembly.ReflectionOnlyLoadFrom(assemblyFile);
                 string s = ass.ImageRuntimeVersion;
 

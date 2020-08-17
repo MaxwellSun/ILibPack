@@ -5,6 +5,10 @@
 
     public static class MutEx
     {
+        /// <summary>
+        /// Метод для получения статистически уникального 128-битный идентификатора
+        /// </summary>
+        /// <returns>Guid</returns>
         public static string GetGUID()
         {
             string result;
